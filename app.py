@@ -4,6 +4,10 @@ from bs4 import BeautifulSoup
 from flask import Flask, render_template, request
 
 
+def is_valid_source(source: str) -> bool:
+    image_extensions = ["jpg", "png", "jpeg"]
+    return any(source.endswith(ext) for ext in image_extensions)
+
 def get_news(url: str) -> Tuple[List[str], str]:
     headers = {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
@@ -15,14 +19,19 @@ def get_news(url: str) -> Tuple[List[str], str]:
         soup = BeautifulSoup(r.text, "html.parser")
 
         # Get image source
-        image = soup.find("source")
-        source = image["srcset"] if image else ""
-        if not any(
-            [source.endswith("jpg"), source.endswith("png"), source.endswith("jpeg")]
-        ):
-            image = soup.find("img")
-            source = image["src"] if image else ""
-        print(f"{source=}")
+        images = soup.find_all("source")
+        source = ""
+        for img in images:
+            if is_valid_source(img["srcset"]):
+                source = img["srcset"]
+                break
+        if not is_valid_source(source):
+            images = soup.find_all("img")
+            for img in images:
+                if is_valid_source(img["src"]):
+                    source = img["src"]
+                    break
+        # print(f"{source=}")
 
         # fetch news and clean it
         news = soup.find_all("p")
@@ -48,7 +57,9 @@ def index():
 def news():
     url = request.form["url"]
     news, src = get_news(url)
-    # pprint(src)
+    src = src.strip()
+    if src == "":
+        return render_template("index.html", news=news, url=url)
     return render_template("index.html", news=news, url=url, src=src)
 
 

@@ -4,6 +4,21 @@ A simple news extractor that extracts the news from the given url and displays i
 
 ____
 
+## Tests
+
+The app so far supports the following news websites:
+
+1. [The Hindu](https://www.thehindu.com/)
+2. [The New York Times](https://www.nytimes.com/)
+3. [The Washington Post](https://www.washingtonpost.com/)
+4. [The Guardian](https://www.theguardian.com/international)
+5. [The Indian Express](https://indianexpress.com/)
+6. and many more...
+
+Do let me know if you find any bugs or errors.
+
+____
+
 ## Installation
 
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install the required packages.
